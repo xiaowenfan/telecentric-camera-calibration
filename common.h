@@ -4,7 +4,7 @@
 class BALProblem {
 public:
     /// load bal data from text file
-    explicit BALProblem(const std::string &filename,  bool use_quaternions = false);
+    explicit BALProblem(const std::string &filename);
 
     ~BALProblem() {
         delete[] point_index_;
@@ -26,7 +26,7 @@ public:
     ///重投影误差
     void ReprojectError(BALProblem& bal_problem);
     //对初始重投影误差设置阈值
-    void Set_threshold_for_reproject(BALProblem& bal_problem);
+    void Set_threshold_for_reproject(BALProblem& bal_problem, int threshold);
 
 
     void Normalize();
@@ -103,7 +103,6 @@ private:
     int num_points_;
     int num_observations_;
     int num_parameters_;
-    //int num_parametersR_;
     bool use_quaternions_;
 
     int *point_index_;      // 每个observation对应的point index

@@ -16,8 +16,6 @@
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/QR>
 #include <cmath>
-
-
 #include "common.h"
 #include "rotation.h"
 #include "random.h"
@@ -27,8 +25,17 @@
 
 namespace plt = matplotlibcpp;
 
+/*
+*！！！！！ 根据实验需要调整的相关参数！！！！！
+*-------------- 在common.cpp中修改--------------
+* image_count----标靶图像数量
+* w_sq----标靶中特征点之间的物理距离
+* point_num----标靶上特征点数量
+* w,h----w表示特征点阵的长，h表示特征点阵的宽，在构造函数里改
+* .bmp----读取的图片格式
+*/
 #define image_count 19
-#define w_sq 1.5               //mm
+#define w_sq 1.5               //单位：mm
 #define point_num 81         //12*9=108   9*9=81
 using namespace Eigen;
 using namespace std;
@@ -105,7 +112,7 @@ double Median(std::vector<double> *data) {
 }
 
 
-BALProblem::BALProblem(const std::string &filename, bool use_quaternions) {
+BALProblem::BALProblem(const std::string &filename) {
 
     int w, h;
     w = 9;
@@ -380,12 +387,11 @@ BALProblem::BALProblem(const std::string &filename, bool use_quaternions) {
 
     destroyAllWindows();
 
+    /////////////////////拷贝一个constpoint数组////////世界坐标///
+    memcpy(constpoint_, parameters_ + 6 * num_cameras_, 3 * num_points_ * sizeof(double));
 
 
-
-    ////////////////////////////上：远心标定//////////////////////////下：优化函数初始化////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+    ////上：远心标定初值估计/////////////下：生成单独优化的文件----初值估计优化////
     //FILE *fptr = fopen(filename.c_str(), "r");
 
     //if (fptr == NULL) {
@@ -404,7 +410,6 @@ BALProblem::BALProblem(const std::string &filename, bool use_quaternions) {
 
     //point_index_ = new int[num_observations_];
     //camera_index_ = new int[num_observations_];
-
 
     //observations_ = new double[2 * num_observations_];
 
@@ -431,48 +436,14 @@ BALProblem::BALProblem(const std::string &filename, bool use_quaternions) {
     //for (int i = 0; i < num_parameters_; ++i) {
     //    FscanfOrDie(fptr, "%lf", parameters_ + i);  
     //}
-    
-    /////////////////////拷贝一个constpoint数组////////世界坐标///
-    memcpy(constpoint_, parameters_ + 6 * num_cameras_, 3 * num_points_ * sizeof(double));
-
     //fclose(fptr);
-
-
-    /// ///////如果运用了四元数////////////////////
-    use_quaternions_ = use_quaternions;
-    if (use_quaternions) {
-        // Switch the angle-axis rotations to quaternions.
-        num_parameters_ = 10 * num_cameras_ + 3 * num_points_;
-        double *quaternion_parameters = new double[num_parameters_];
-        double *original_cursor = parameters_;
-        double *quaternion_cursor = quaternion_parameters;
-        for (int i = 0; i < num_cameras_; ++i) {
-            AngleAxisToQuaternion(original_cursor, quaternion_cursor);
-            quaternion_cursor += 4;
-            original_cursor += 3;
-            for (int j = 4; j < 10; ++j) {
-                *quaternion_cursor++ = *original_cursor++;
-            }
-        }
-        // Copy the rest of the points.
-        for (int i = 0; i < 3 * num_points_; ++i) {
-            *quaternion_cursor++ = *original_cursor++;
-        }
-        // Swap in the quaternion parameters.
-        delete[]parameters_;
-        parameters_ = quaternion_parameters;
-    }
 }
 
 
 void BALProblem::WriteToFile(const std::string &filename) const {
     FILE *fptr = fopen(filename.c_str(), "w");
-    
-//     std::string filenameR = filename;
-//     replace(filenameR.begin(),filenameR.end(),'L','R');
-//     FILE *fptrR = fopen(filenameR.c_str(), "w");
 
-    if (fptr == NULL ) {//|| fptrR == NULL
+    if (fptr == NULL ) {
         std::cerr << "Error: unable to open file " << filename;
         return;
     }
@@ -496,15 +467,11 @@ void BALProblem::WriteToFile(const std::string &filename) const {
             memcpy(angleaxis + 3, parameters_ + 10 * i + 4, 6 * sizeof(double));
         } else {
             memcpy(angleaxis, parameters_ + 6 * i, 6 * sizeof(double));
-//             memcpy(angleaxisR, parametersR_ + 6 * i, 6 * sizeof(double));
         }
-//         fprintf(fptr,"camera%d: ",i);
         for (int j = 0; j < 3; ++j) {
             fprintf(fptr, "%.5g  ", angleaxis[j]);
-            //fprintf(fptrR, "%.5g  ", angleaxisR[j]);
         }
         fprintf(fptr, "\n");
-        //fprintf(fptrR, "\n");
     }
     ///这个for循环写入平移向量
     for(int i = 0;i < num_cameras(); ++i){
@@ -516,38 +483,28 @@ void BALProblem::WriteToFile(const std::string &filename) const {
             memcpy(angleaxis + 3, parameters_ + 10 * i + 4, 6 * sizeof(double));
         } else {
             memcpy(angleaxis, parameters_ + 6 * i, 6 * sizeof(double));
-//             memcpy(angleaxisR, parametersR_ + 6 * i, 6 * sizeof(double));
         }
-//         fprintf(fptr,"camera%d: ",i);
         for (int j = 3; j < 6; ++j) {
             fprintf(fptr, "%.5g  ", angleaxis[j]);
-            //fprintf(fptrR, "%.5g  ", angleaxisR[j]);
         }
         fprintf(fptr, "\n");
-        //fprintf(fptrR, "\n");
     }
     
 
     const double *points = parameters_ + camera_block_size() * num_cameras_;
     for (int i = 0; i < num_points(); ++i) {
         const double *point = points + i * point_block_size();
-//         fprintf(fptr,"point%d: ",i);
         for (int j = 0; j < point_block_size(); ++j) {
             fprintf(fptr, "%.5g  ", point[j]);
-            //fprintf(fptrR, "%.5g  ", point[j]);
         }
         fprintf(fptr, "\n");
-        //fprintf(fptrR, "\n");
     }
     //写入内参
     const double *inparameter = parameters_+camera_block_size()*num_cameras_+point_block_size()*num_points_;
-//     const double *inparameterR = parametersR_ + camera_block_size()*num_cameras_;
     for(int i = 0;i < 9;i++){/////根据内参的优化个数修改打印出来的数量//////
         fprintf(fptr,"%.12f %d %d\n",inparameter[i],0,0);
-//         fprintf(fptrR,"%f %d %d\n",inparameterR[i],0,0);
     }
     fclose(fptr);
-    //fclose(fptrR);
     
     
 }
@@ -717,7 +674,7 @@ void BALProblem::ReprojectError(BALProblem& bal_problem) {
 }
 
 
-void BALProblem::Set_threshold_for_reproject(BALProblem& bal_problem) {
+void BALProblem::Set_threshold_for_reproject(BALProblem& bal_problem,int threshold) {
     const int point_block_size = bal_problem.point_block_size();//3        
     const int camera_block_size = bal_problem.camera_block_size();//6
     double* inparameters = bal_problem.mutable_inparameters();
@@ -742,7 +699,7 @@ void BALProblem::Set_threshold_for_reproject(BALProblem& bal_problem) {
 
         errorx = predictions[0] - observations[2 * i + 0];
         errory = predictions[1] - observations[2 * i + 1];
-        if (errorx < 1 && errory < 1) {
+        if (errorx < threshold && errory < threshold) {
             observations_[2 * count + 0] = observations[2 * i + 0];
             observations_[2 * count + 1] = observations[2 * i + 1];
             camera_index_[count] = camera_index_[i];
