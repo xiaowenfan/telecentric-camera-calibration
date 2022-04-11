@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{df922751-b3bc-439e-8138-f0e13a71488d}</ProjectGuid>
+    <RootNamespace>telecalibrate</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>E:\anaconda\anaconda3\Lib\site-packages\numpy\core\include;E:\python\include;D:\opencv\build\include\opencv2;D:\ceres_solver_config\lib_config\install\eigen\include;D:\opencv\build\include;D:\ceres_solver_config\lib_config\eigen-3.3.9\Eigen;D:\ceres_solver_config\lib_config\install\glog\include;D:\ceres_solver_config\lib_config\install\gflags\include;D:\ceres_solver_config\lib_config\install\ceres\include;D:\ceres_solver_config\lib_config\suitsparse-build\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\python\libs;D:\opencv\build\x64\vc15\lib;D:\ceres_solver_config\lib_config\install\ceres\lib;D:\ceres_solver_config\lib_config\suitsparse-build\install\lib;D:\ceres_solver_config\lib_config\install\glog\lib;D:\ceres_solver_config\lib_config\install\gflags\lib;D:\ceres_solver_config\lib_config\suitesparse-metis-for-windows-master\lapack_windows\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>E:\anaconda\anaconda3\Lib\site-packages\numpy\core\include;E:\python\include;D:\opencv\build\include\opencv2;D:\ceres_solver_config\lib_config\install\eigen\include;D:\opencv\build\include;D:\ceres_solver_config\lib_config\eigen-3.3.9\Eigen;D:\ceres_solver_config\lib_config\install\glog\include;D:\ceres_solver_config\lib_config\install\gflags\include;D:\ceres_solver_config\lib_config\install\ceres\include;D:\ceres_solver_config\lib_config\suitsparse-build\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\python\libs;D:\opencv\build\x64\vc15\lib;D:\ceres_solver_config\lib_config\install\ceres\lib;D:\ceres_solver_config\lib_config\suitsparse-build\install\lib;D:\ceres_solver_config\lib_config\install\glog\lib;D:\ceres_solver_config\lib_config\install\gflags\lib;D:\ceres_solver_config\lib_config\suitesparse-metis-for-windows-master\lapack_windows\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\python\include;D:\ceres_solver_config\lib_config\eigen-3.3.9;E:\anaconda\anaconda3\Lib\site-packages\numpy\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opencv_world420.lib;ceres.lib;gflags.lib;glog.lib;libspqr.lib;libcholmod.lib;libccolamd.lib;libcamd.lib;libcolamd.lib;libamd.lib;liblapack.lib;libblas.lib;suitesparseconfig.lib;metis.lib;python39.lib;python3.lib;_tkinter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\python\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\python\include;D:\ceres_solver_config\lib_config\eigen-3.3.9;E:\anaconda\anaconda3\Lib\site-packages\numpy\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opencv_world420.lib;ceres.lib;gflags.lib;glog.lib;libspqr.lib;libcholmod.lib;libccolamd.lib;libcamd.lib;libcolamd.lib;libamd.lib;liblapack.lib;libblas.lib;suitesparseconfig.lib;metis.lib;python39.lib;python3.lib;_tkinter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\python\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="telecalibrate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.h" />
+    <ClInclude Include="random.h" />
+    <ClInclude Include="rotation.h" />
+    <ClInclude Include="SnavelyReprojectionError.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="circleL\cb0_0.jpg" />
+    <Image Include="circleL\cb0_1.jpg" />
+    <Image Include="circleL\cb0_10.jpg" />
+    <Image Include="circleL\cb0_11.jpg" />
+    <Image Include="circleL\cb0_12.jpg" />
+    <Image Include="circleL\cb0_13.jpg" />
+    <Image Include="circleL\cb0_14.jpg" />
+    <Image Include="circleL\cb0_15.jpg" />
+    <Image Include="circleL\cb0_16.jpg" />
+    <Image Include="circleL\cb0_17.jpg" />
+    <Image Include="circleL\cb0_18.jpg" />
+    <Image Include="circleL\cb0_19.jpg" />
+    <Image Include="circleL\cb0_2.jpg" />
+    <Image Include="circleL\cb0_20.jpg" />
+    <Image Include="circleL\cb0_21.jpg" />
+    <Image Include="circleL\cb0_22.jpg" />
+    <Image Include="circleL\cb0_23.jpg" />
+    <Image Include="circleL\cb0_3.jpg" />
+    <Image Include="circleL\cb0_4.jpg" />
+    <Image Include="circleL\cb0_5.jpg" />
+    <Image Include="circleL\cb0_6.jpg" />
+    <Image Include="circleL\cb0_7.jpg" />
+    <Image Include="circleL\cb0_8.jpg" />
+    <Image Include="circleL\cb0_9.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="circleL\paramsfile.txt" />
+    <Text Include="circleL\prefinal.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
