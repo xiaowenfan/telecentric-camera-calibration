@@ -298,7 +298,7 @@ void estimate_params(const std::string& root) {
 
     vector<vector<double>> Rs;
     vector<Vector3d> Ts;
-
+    //修改过的GITHUB
     for (int k = 0; k < image_count; k++) {
         Matrix<double, 3, 3> H = homographies[k];
         Matrix<double, 3, 3> K = k_mats[k];
