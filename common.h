@@ -15,25 +15,14 @@ public:
         delete[] reprojectu_;
         delete[] reprojectv_;
     }
-
     
     /// save results to text file
     void WriteToFile(const std::string &filename) const;
-
-    /// save results to ply pointcloud
-    void WriteToPLYFile(const std::string &filename) const;
 
     ///重投影误差
     void ReprojectError(BALProblem& bal_problem);
     //对初始重投影误差设置阈值
     void Set_threshold_for_reproject(BALProblem& bal_problem, int threshold);
-
-
-    void Normalize();
-
-    void Perturb(const double rotation_sigma,
-                 const double translation_sigma,
-                 const double point_sigma);
 
     int camera_block_size() const { return use_quaternions_ ? 10 : 6; }//修改成10
 
@@ -78,27 +67,8 @@ public:
         return mutable_cameras() + camera_index_[i] * camera_block_size();
     }
 
-    double *mutable_point_for_observation(int i) {
-        return mutable_points() + point_index_[i] * point_block_size();
-    }
-
-    const double *camera_for_observation(int i) const {
-        return cameras() + camera_index_[i] * camera_block_size();
-    }
-
-    const double *point_for_observation(int i) const {
-        return points() + point_index_[i] * point_block_size();
-    }
 
 private:
-    void CameraToAngelAxisAndCenter(const double *camera,
-                                    double *angle_axis,
-                                    double *center) const;
-
-    void AngleAxisAndCenterToCamera(const double *angle_axis,
-                                    const double *center,
-                                    double *camera) const;
-
     int num_cameras_;
     int num_points_;
     int num_observations_;

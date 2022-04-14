@@ -27,16 +27,19 @@ namespace plt = matplotlibcpp;
 
 /*
 *！！！！！ 根据实验需要调整的相关参数！！！！！
-*-------------- 在common.cpp中修改--------------
+*-------------- 在下面修改--------------
 * image_count----标靶图像数量
 * w_sq----标靶中特征点之间的物理距离
 * point_num----标靶上特征点数量
 * w,h----w表示特征点阵的长，h表示特征点阵的宽，在构造函数里改
 * .bmp----读取的图片格式
 */
-#define image_count 19
-#define w_sq 1.5               //单位：mm
-#define point_num 81         //12*9=108   9*9=81
+const int image_count = 19;
+const int  w_sq = 1.5;            //单位：mm
+const int  point_num = 81;        //   9*9=81
+const int w = 9;
+const int h = 9;
+
 using namespace Eigen;
 using namespace std;
 using namespace cv;
@@ -45,78 +48,12 @@ using namespace cv;
 typedef Eigen::Map<Eigen::VectorXd> VectorRef;
 typedef Eigen::Map<const Eigen::VectorXd> ConstVectorRef;
 
-template<typename T>
-void FscanfOrDie(FILE *fptr, const char *format, T *value) {
-    int num_scanned = fscanf(fptr, format, value);
-    if (num_scanned != 1)
-        std::cerr << "Invalid UW data file. ";
-}
-
-void PerturbPoint3(const double sigma, double *point) {
-    for (int i = 0; i < 3; ++i)
-        point[i] += RandNormal() * sigma;
-}
-
-double Median(std::vector<double> *data) {
-    int n = data->size();
-    std::vector<double>::iterator mid_point = data->begin() + n / 2;
-    std::nth_element(data->begin(), mid_point, data->end());
-    return *mid_point;
-}
-
-
- bool CamProjectionWithDistortion(const double* camera, const double* point, const double* inparameter, double* predictions) {
-    // Rodrigues' formula
-    double p[3];
-    AngleAxisRotatePoint(camera, point, p);//旋转向量--->旋转矩阵
-    // camera[3,4,5] are the translation
-    p[0] += camera[3];    //Xc
-    p[1] += camera[4];//P = R*X+t     R是旋转矩阵   Yc
-    p[2] += camera[5];    //Zc        
-//         std::cout<<"图像坐标系下的Z轴坐标："从<<p[0]<<"\n";
-        // Compute the center fo distortion
-
-//         T xp = p[0]/p[2];//p = P/P.z   归一化坐标 
-//         T yp = p[1]/p[2];                                           // 注释是远心相机的配置
-
-        // Apply second and fourth order radial distortion
-    const double& l1 = inparameter[4];  //jing xiang jibian
-    const double& l2 = inparameter[5];  //bolengjing jibiannnnnnnnnnnnnnnn 
-    const double& l3 = inparameter[8];  //bolengjing jibian 
-    const double& p1 = inparameter[6];//qie xiang jibian 
-    const double& p2 = inparameter[7];//qie xiang jibian 
-    const double& focalx = inparameter[0];
-    const double& focaly = inparameter[1];
-    const double& cx = inparameter[2];
-    const double& cy = inparameter[3];
-    //         T du = p[0] - cx;
-    //         T dv = p[1] - cy;
-
-    double r2 = p[0] * p[0] + p[1] * p[1];  //  xp * xp + yp * yp;               //远心相机的配置  du==p[0]   dv == p[1]
-
-    double distortion = 1.0 + r2 * (l1 + r2 * (l2 + l3 * r2));//add the k3
-//         T distortion =  T(1.0) + r2 * ( l1 + r2 * l2);
-    double xd = p[0] * distortion;//+ T(2.0) * p1 * p[0] * p[1] + p2 * (r2 +T(2.0) * p[0] * p[0]);//远心相机的配置  xp * distortion + T(2.0) * p1 * xp * yp + p2 * (r2 +T(2) * xp * xp);du
-    double yd = p[1] * distortion;//+ p1 * (r2 + T(2.0) * p[1] * p[1]) + T(2.0) * p2 * p[0] *p[1];//注释是远心相机的配置yp * distortion + p1 * (r2 + T(2.0) * yp * yp) + T(2) * p2 * xp *yp;
-
-    ////modify code according matlab code
-//         T xd = l1 * p[0] * r2 + p1 * p[0] * p[0] + p2 * p[0] * p[1] + l2 * r2;
-//         T yd = l1 * p[1] * r2 + p2 * p[1] * p[1] + p1 * p[0] * p[1] + l3 * r2;
-
-
-    predictions[0] = focalx * xd + cx;
-    predictions[1] = focaly * yd + cy;
-    //std::cout << "predictions[0] = " << predictions[0] << "   predictions[1] = " << predictions[1] << std::endl;
-
-    return true;
-}
-
 
 BALProblem::BALProblem(const std::string &filename) {
 
-    int w, h;
-    w = 9;
-    h = 9;
+    //int w, h;
+    //w = 9;
+    //h = 9;
     int num_point = w * h;
     Size pattern_size = Size(w, h);
     Mat srcImage, grayImage;
@@ -530,7 +467,7 @@ void BALProblem::ReprojectError(BALProblem& bal_problem) {
         double* inparameter = inparameters;
  
         double predictions[2];
-        CamProjectionWithDistortion(camera, point, inparameter, predictions);
+        SnavelyReprojectionError::CamProjectionWithDistortion(camera, point, inparameter, predictions);
        
         errorx = errorx + abs(predictions[0] - observations[2 * i + 0]);
         errory = errory + abs(predictions[1] - observations[2 * i + 1]);
@@ -695,7 +632,7 @@ void BALProblem::Set_threshold_for_reproject(BALProblem& bal_problem,int thresho
         double* camera = cameras + camera_block_size * bal_problem.camera_index()[i];
 
         double predictions[2];
-        CamProjectionWithDistortion(camera, point, inparameter, predictions);
+        SnavelyReprojectionError::CamProjectionWithDistortion(camera, point, inparameter, predictions);
 
         errorx = predictions[0] - observations[2 * i + 0];
         errory = predictions[1] - observations[2 * i + 1];
@@ -710,148 +647,4 @@ void BALProblem::Set_threshold_for_reproject(BALProblem& bal_problem,int thresho
     num_observations_ = count;
 
 
-}
-
-// Write the problem to a PLY file for inspection in Meshlab or CloudCompare
-void BALProblem::WriteToPLYFile(const std::string &filename) const {
-    std::ofstream of(filename.c_str());
-
-    of << "ply"
-       << '\n' << "format ascii 1.0"
-       << '\n' << "element vertex " << num_cameras_ + num_points_
-       << '\n' << "property float x"
-       << '\n' << "property float y"
-       << '\n' << "property float z"
-       << '\n' << "property uchar red"
-       << '\n' << "property uchar green"
-       << '\n' << "property uchar blue"
-       << '\n' << "end_header" << std::endl;
-
-    // Export extrinsic data (i.e. camera centers) as green points.
-    double angle_axis[3];
-    double center[3];
-    for (int i = 0; i < num_cameras(); ++i) {
-        const double *camera = cameras() + camera_block_size() * i;
-        CameraToAngelAxisAndCenter(camera, angle_axis, center);
-        of << center[0] << ' ' << center[1] << ' ' << center[2]<<' '
-           << "0 255 0" << '\n';
-    }
-
-    // Export the structure (i.e. 3D Points) as white points.
-    const double *points = parameters_ + camera_block_size() * num_cameras_;
-    for (int i = 0; i < num_points(); ++i) {
-        const double *point = points + i * point_block_size();
-        for (int j = 0; j < point_block_size(); ++j) {
-            of << point[j] << ' ';
-        }
-        of << "255 255 255\n";
-    }
-    of.close();
-}
-
-void BALProblem::CameraToAngelAxisAndCenter(const double *camera,
-                                            double *angle_axis,
-                                            double *center) const {
-    VectorRef angle_axis_ref(angle_axis, 3);
-    if (use_quaternions_) {
-        QuaternionToAngleAxis(camera, angle_axis);
-    } else {
-        angle_axis_ref = ConstVectorRef(camera, 3);
-    }
-
-    // c = -R't
-    Eigen::VectorXd inverse_rotation = -angle_axis_ref;
-    AngleAxisRotatePoint(inverse_rotation.data(),
-                         camera + camera_block_size() - 6,
-                         center);
-    VectorRef(center, 3) *= -1.0;
-}
-
-void BALProblem::AngleAxisAndCenterToCamera(const double *angle_axis,
-                                            const double *center,
-                                            double *camera) const {
-    ConstVectorRef angle_axis_ref(angle_axis, 3);
-    if (use_quaternions_) {
-        AngleAxisToQuaternion(angle_axis, camera);
-    } else {
-        VectorRef(camera, 3) = angle_axis_ref;
-    }
-
-    // t = -R * c
-    AngleAxisRotatePoint(angle_axis, center, camera + camera_block_size() - 6);
-    VectorRef(camera + camera_block_size() - 6, 3) *= -1.0;
-}
-
-void BALProblem::Normalize() {
-    // Compute the marginal median of the geometry
-    std::vector<double> tmp(num_points_);
-    Eigen::Vector3d median;
-    double *points = mutable_points();
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < num_points_; ++j) {
-            tmp[j] = points[3 * j + i];
-        }
-        median(i) = Median(&tmp);
-    }
-
-    for (int i = 0; i < num_points_; ++i) {
-        VectorRef point(points + 3 * i, 3);
-        tmp[i] = (point - median).lpNorm<1>();
-    }
-
-    const double median_absolute_deviation = Median(&tmp);
-
-    // Scale so that the median absolute deviation of the resulting
-    // reconstruction is 100
-
-    const double scale = 100.0 / median_absolute_deviation;
-
-    // X = scale * (X - median)
-    for (int i = 0; i < num_points_; ++i) {
-        VectorRef point(points + 3 * i, 3);
-        point = scale * (point - median);
-    }
-
-    double *cameras = mutable_cameras();
-    double angle_axis[3];
-    double center[3];
-    for (int i = 0; i < num_cameras_; ++i) {
-        double *camera = cameras + camera_block_size() * i;
-        CameraToAngelAxisAndCenter(camera, angle_axis, center);
-        // center = scale * (center - median)
-        VectorRef(center, 3) = scale * (VectorRef(center, 3) - median);
-        AngleAxisAndCenterToCamera(angle_axis, center, camera);
-    }
-}
-
-void BALProblem::Perturb(const double rotation_sigma,
-                         const double translation_sigma,
-                         const double point_sigma) {
-    assert(point_sigma >= 0.0);
-    assert(rotation_sigma >= 0.0);
-    assert(translation_sigma >= 0.0);
-
-    double *points = mutable_points();
-    if (point_sigma > 0) {
-        for (int i = 0; i < num_points_; ++i) {
-            PerturbPoint3(point_sigma, points + 3 * i);
-        }
-    }
-
-    for (int i = 0; i < num_cameras_; ++i) {
-        double *camera = mutable_cameras() + camera_block_size() * i;
-
-        double angle_axis[3];
-        double center[3];
-        // Perturb in the rotation of the camera in the angle-axis
-        // representation
-        CameraToAngelAxisAndCenter(camera, angle_axis, center);
-        if (rotation_sigma > 0.0) {
-            PerturbPoint3(rotation_sigma, angle_axis);
-        }
-        AngleAxisAndCenterToCamera(angle_axis, center, camera);
-
-        if (translation_sigma > 0.0)
-            PerturbPoint3(translation_sigma, camera + camera_block_size() - 6);
-    }
 }
